@@ -14,3 +14,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   show-sql: true
   profiles.active: test
+app:
+  jwt-secret:
+      eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyMzM3OTA4MywiaWF0IjoxNzIzMzc5MDgzfQ.C0ANVkmD_RRyGYHLQsPqAXzUHemN2MIuImbCQ30u2vQ
+  jwt-expiration-milliseconds:
+      3600000
+
