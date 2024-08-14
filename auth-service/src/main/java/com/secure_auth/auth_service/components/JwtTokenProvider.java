@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
+
+import static io.jsonwebtoken.Jwts.*;
 
 
 @Component
@@ -35,7 +37,7 @@ public class JwtTokenProvider {
 
         Date expirationDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
-        return Jwts.builder()
+        return builder()
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(expirationDate)
@@ -43,27 +45,27 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    private Key key(){
+    private SecretKey key(){
         return Keys.hmacShaKeyFor(
                 Decoders.BASE64.decode(jwtSecret)
         );
     }
 
-    //Get username from JWT token
+
     public String getUsername(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key())
+        Claims claims = Jwts.parser()
+                .verifyWith(key())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
         return claims.getSubject();
     }
 
     //Validate the Token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key())
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser()
+                    .verifyWith(key())
                     .build()
                     .parse(token);
             return true;
