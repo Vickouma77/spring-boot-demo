@@ -20,16 +20,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UserRepository userRepository;
 
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        User user = userRepository.findByUserNameOrByEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("No user exists with that username or email"));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user exists with that username"));
 
         Set<GrantedAuthority> authorities = user.getRoles().stream()
                 .map((role) -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(
-                usernameOrEmail,
+                username,
                 user.getPassword(),
                 authorities
         );
