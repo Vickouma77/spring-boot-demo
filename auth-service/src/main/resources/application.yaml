@@ -16,7 +16,7 @@ spring:
   profiles.active: test
 app:
   jwt-secret:
-      eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyMzM3OTA4MywiaWF0IjoxNzIzMzc5MDgzfQ.C0ANVkmD_RRyGYHLQsPqAXzUHemN2MIuImbCQ30u2vQ
+    daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
   jwt-expiration-milliseconds:
-      3600000
+    604800000
 
