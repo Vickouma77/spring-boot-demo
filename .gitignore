@@ -31,3 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
+
+HELP.md
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+.kotlin
