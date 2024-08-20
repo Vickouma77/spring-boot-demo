@@ -25,7 +25,9 @@ class SpringSecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 
         http.csrf { it.disable() }
-            .authorizeHttpRequests { it.anyRequest().authenticated() }
+            .authorizeHttpRequests { it.requestMatchers("/login/**", "/welcome/**").permitAll()
+                .anyRequest().authenticated()
+            }
             .formLogin {
                 it.loginPage("/login")
                     .loginProcessingUrl("/login")
