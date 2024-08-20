@@ -1,4 +1,4 @@
-package com.secure_auth.security_auth.entities
+package com.secure_auth.security_auth.entity
 
 import jakarta.persistence.*
 import java.util. *
