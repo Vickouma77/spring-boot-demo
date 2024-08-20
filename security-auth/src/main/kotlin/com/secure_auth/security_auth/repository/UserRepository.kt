@@ -12,7 +12,7 @@ public interface UserRepository: JpaRepository<Users, Long> {
 
     fun existsByEmail(email: String): Boolean
 
-    fun findByUsernameOrByEmail(username: String, email: String): Optional<Users>
+    fun findByUsernameOrEmail(username: String, email: String): Optional<Users>
 
     fun existsByUsername(username: String): Boolean
 }
