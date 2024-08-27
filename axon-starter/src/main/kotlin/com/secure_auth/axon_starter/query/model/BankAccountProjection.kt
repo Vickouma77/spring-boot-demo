@@ -8,5 +8,5 @@ import jakarta.persistence.Id
 data class BankAccountProjection(
 
     @Id val accountId: String,
-    val balance: Double
+    var balance: Double
 )
