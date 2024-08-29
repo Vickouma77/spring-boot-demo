@@ -7,6 +7,7 @@ import com.secure_auth.axon_starter.events.MoneyDepositedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
+import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.spring.stereotype.Aggregate;
 
 /**
@@ -45,13 +46,13 @@ class BankAccountAggregate() {
      * This is used by the Axon framework to track and manage this aggregate instance.
      */
     @AggregateIdentifier
-    private lateinit var accountId: String;
+    lateinit var accountId: String;
 
     /**
      * The current balance of the bank account.
      * Updated through {MoneyDepositedEvent} as deposits are made.
      */
-    private var balance: Double = 0.0;
+    var balance: Double = 0.0;
 
 
     /**
@@ -63,7 +64,7 @@ class BankAccountAggregate() {
      */
     @CommandHandler
     constructor(command: CreateAccountCommand): this() {
-        apply { AccountCreatedEvent(command.accountId, command.initialBalance) }
+        AggregateLifecycle.apply(AccountCreatedEvent(command.accountId, command.initialBalance))
     }
 
     /**
@@ -75,7 +76,7 @@ class BankAccountAggregate() {
      */
     @CommandHandler
     fun handle(command: DepositMoneyCommand) {
-        apply { MoneyDepositedEvent(command.accountId, command.amount) }
+        AggregateLifecycle.apply(MoneyDepositedEvent(command.accountId, command.amount))
     }
 
     /**

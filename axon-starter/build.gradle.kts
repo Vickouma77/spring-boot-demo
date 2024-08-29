@@ -26,6 +26,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.axonframework:axon-spring-boot-starter:4.10.0")
 	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.axonframework:axon-test:4.10.0")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
