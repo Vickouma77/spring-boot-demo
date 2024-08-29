@@ -38,7 +38,7 @@ import org.axonframework.spring.stereotype.Aggregate;
  */
 
 @Aggregate
-class BankAccountAggregate {
+class BankAccountAggregate() {
 
     /**
      * The unique identifier for the bank account aggregate.
@@ -53,10 +53,6 @@ class BankAccountAggregate {
      */
     private var balance: Double = 0.0;
 
-    /**
-     * Default constructor required by Axon framework for event sourcing.
-     */
-    constructor()
 
     /**
      * Command handler for creating a new bank account.
@@ -66,7 +62,7 @@ class BankAccountAggregate {
      * @param command The command to create a new account, containing the account ID and initial balance.
      */
     @CommandHandler
-    constructor(command: CreateAccountCommand) {
+    constructor(command: CreateAccountCommand): this() {
         apply { AccountCreatedEvent(command.accountId, command.initialBalance) }
     }
 
