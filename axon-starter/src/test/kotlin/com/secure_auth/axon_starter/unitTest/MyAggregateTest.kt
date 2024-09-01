@@ -33,7 +33,7 @@ class MyAggregateTest {
     }
 
     @Test
-    fun `test money deposit`(){
+    fun `test money deposited`(){
         val accountId = "account-123"
         val amount = 400.00
         val initialBalance = 0.0
