@@ -1,16 +1,16 @@
-package com.secure_auth.axon_starter.aggregate;
+package com.secure_auth.axon_starter.aggregate
 
-import com.secure_auth.axon_starter.commands.CreateAccountCommand;
-import com.secure_auth.axon_starter.commands.DepositMoneyCommand;
+import com.secure_auth.axon_starter.commands.CreateAccountCommand
+import com.secure_auth.axon_starter.commands.DepositMoneyCommand
 import com.secure_auth.axon_starter.commands.WithdrawMoneyCommand
-import com.secure_auth.axon_starter.events.AccountCreatedEvent;
-import com.secure_auth.axon_starter.events.MoneyDepositedEvent;
+import com.secure_auth.axon_starter.events.AccountCreatedEvent
+import com.secure_auth.axon_starter.events.MoneyDepositedEvent
 import com.secure_auth.axon_starter.events.MoneyWithdrawnEvent
-import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
-import org.axonframework.modelling.command.AggregateIdentifier;
+import org.axonframework.commandhandling.CommandHandler
+import org.axonframework.eventsourcing.EventSourcingHandler
+import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.AggregateLifecycle
-import org.axonframework.spring.stereotype.Aggregate;
+import org.axonframework.spring.stereotype.Aggregate
 
 /**
  * This aggregate represents a bank account in the Axon framework.
@@ -48,13 +48,13 @@ class BankAccountAggregate() {
      * This is used by the Axon framework to track and manage this aggregate instance.
      */
     @AggregateIdentifier
-    lateinit var accountId: String;
+    lateinit var accountId: String
 
     /**
      * The current balance of the bank account.
      * Updated through {MoneyDepositedEvent} as deposits are made.
      */
-    var balance: Double = 0.0;
+    var balance: Double = 0.0
 
 
     /**
