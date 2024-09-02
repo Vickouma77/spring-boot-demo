@@ -2,8 +2,10 @@ package com.secure_auth.axon_starter.aggregate;
 
 import com.secure_auth.axon_starter.commands.CreateAccountCommand;
 import com.secure_auth.axon_starter.commands.DepositMoneyCommand;
+import com.secure_auth.axon_starter.commands.WithdrawMoneyCommand
 import com.secure_auth.axon_starter.events.AccountCreatedEvent;
 import com.secure_auth.axon_starter.events.MoneyDepositedEvent;
+import com.secure_auth.axon_starter.events.MoneyWithdrawnEvent
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -80,6 +82,18 @@ class BankAccountAggregate() {
     }
 
     /**
+     * Command handler for withdrawing money from the bank account.
+     * When the {WithdrawMoneyCommand} is received, this handler applies a
+     * {MoneyWithdrawnEvent} to update the account's balance.
+     *
+     * @param command The command to deposit money, containing the account ID and deposit amount.
+     */
+    @CommandHandler
+    fun withdraw(command: WithdrawMoneyCommand) {
+        AggregateLifecycle.apply(MoneyWithdrawnEvent(command.accountId, command.amountToWithdraw))
+    }
+
+    /**
      * Event sourcing handler for the {AccountCreatedEvent}.
      * This method is called to update the aggregate's state when a new account is created. It
      * sets the account ID and initial balance based on the event data.
@@ -101,5 +115,10 @@ class BankAccountAggregate() {
     @EventSourcingHandler
     fun on(event: MoneyDepositedEvent) {
         balance = balance.plus(event.amount)
+    }
+
+    @EventSourcingHandler
+    fun on(event: MoneyWithdrawnEvent) {
+        balance = balance.minus(event.amountToWithdraw)
     }
 }
