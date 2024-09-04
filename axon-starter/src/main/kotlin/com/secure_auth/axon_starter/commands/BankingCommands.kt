@@ -48,3 +48,15 @@ data class WithdrawMoneyCommand(
     @TargetAggregateIdentifier val accountId: String,
     val amountToWithdraw: Double
 )
+
+data class DebitAccountCommand(
+    val accountId: String,
+    val transactionId: String,
+    val amount: Double
+)
+
+data class CreditAccountCommand(
+    val accountId: String,
+    val transactionId: String,
+    val amount: Double
+)

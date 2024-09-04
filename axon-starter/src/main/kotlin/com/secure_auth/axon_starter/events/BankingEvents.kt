@@ -50,3 +50,27 @@ data class MoneyWithdrawnEvent(
     val accountId: String,
     val amountToWithdraw: Double
 )
+
+data class InitiatedTransferEvent(
+    val transactionId: String,
+    val sourceAccountId: String,
+    val targetAccountId: String,
+    val amount: Double
+)
+
+data class MoneyDebitEvent(
+    val transactionId: String,
+    val accountId: String,
+    val amount: Double
+)
+
+data class CreditedAccountEvent(
+    val transactionId: String,
+    val accountId: String,
+    val amount: Double
+)
+
+data class TransactionFailedEvent(
+    val transactionId: String,
+    val reason: String
+)
