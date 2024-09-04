@@ -5,6 +5,7 @@ import com.secure_auth.axon_starter.commands.DebitAccountCommand
 import com.secure_auth.axon_starter.events.CreditedAccountEvent
 import com.secure_auth.axon_starter.events.InitiatedTransferEvent
 import com.secure_auth.axon_starter.events.MoneyDebitEvent
+import com.secure_auth.axon_starter.events.TransactionFailedEvent
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.saga.SagaEventHandler
 import org.axonframework.modelling.saga.SagaLifecycle
