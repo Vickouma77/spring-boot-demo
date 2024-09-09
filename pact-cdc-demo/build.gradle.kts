@@ -23,7 +23,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("au.com.dius.pact.provider:junit5spring:4.2.8")
-	runtimeOnly("io.github.oshai:kotlin-logging:7.0.0")
+	implementation("io.github.oshai:kotlin-logging:7.0.0")
 	testImplementation("au.com.dius.pact.provider:junit5:4.6.13")
 	testImplementation("au.com.dius.pact.consumer:junit5:4.6.13")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
