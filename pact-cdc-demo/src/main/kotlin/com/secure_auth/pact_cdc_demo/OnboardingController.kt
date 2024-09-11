@@ -24,4 +24,21 @@ class OnboardingController(private val emailVerificationService: EmailVerificati
     private fun extractBearerToken(authorizationHeader: String): String {
         return authorizationHeader.removePrefix("Bearer ").trim()
     }
+
+    private val users = listOf(
+        User(1, "John Doe", "john.doe@example.com"),
+        User(2, "Jane Smith", "jane.smith@example.com")
+    )
+
+    @GetMapping("/users/{id}")
+    fun getUserById(@PathVariable id: Long): ResponseEntity<User> {
+        val user = users.find { it.id == id }
+        return if (user != null) {
+            ResponseEntity(user, HttpStatus.OK)
+        } else {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
+    }
+
+    data class User(val id: Long, val name: String, val email: String)
 }

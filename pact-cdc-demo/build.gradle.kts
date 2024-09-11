@@ -3,6 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.24"
 	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("au.com.dius.pact") version "4.6.14"
 }
 
 group = "com.secure-auth"
@@ -37,6 +38,17 @@ kotlin {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
 }
+
+pact{
+	publish{
+		pactBrokerUrl = "http://localhost:9292"
+		consumerVersion = "1.0.1"
+	}
+	broker {
+		pactBrokerUrl = "http://localhost:9292"
+	}
+}
+
 
 tasks.withType<Test> {
 	useJUnitPlatform()
