@@ -8,6 +8,9 @@ import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.secure_auth.pact_cdc_demo.EmailVerificationService
+import com.secure_auth.pact_cdc_demo.ResponseBody
+import com.secure_auth.pact_cdc_demo.VerificationResponse
+import org.apache.hc.core5.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,13 +34,22 @@ class PactProviderTest {
 
     @TestTemplate
     @ExtendWith(PactVerificationSpringProvider::class)
-    fun pactVerificationTestTemplate(context: PactVerificationContext) {
+    fun pactVerificationTestTemplate(context: PactVerificationContext, request: HttpRequest) {
+
         context.verifyInteraction()
     }
 
     @State("User with valid token requests new email verification code")
     fun userWithValidTokenRequestsNewEmailVerificationCode() {
         val validToken = "b87f0324-50a6-4c61-94cc-b34593a1fd95"
-        Mockito.`when`(emailVerificationService.sendVerificationCode(validToken)).thenReturn(true)
+        Mockito.`when`(emailVerificationService.sendVerificationCode(validToken)).thenReturn(
+            VerificationResponse(
+                status = 200,
+                body = ResponseBody(
+                    content = "Verification code sent successfully",
+                    contentType = "text/plain"
+                )
+            )
+        )
     }
 }

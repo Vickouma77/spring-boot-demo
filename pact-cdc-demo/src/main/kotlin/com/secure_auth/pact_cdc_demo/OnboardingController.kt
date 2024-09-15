@@ -1,9 +1,10 @@
 package com.secure_auth.pact_cdc_demo
 
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @RequestMapping("/onboarding")
@@ -14,11 +15,13 @@ class OnboardingController(private val emailVerificationService: EmailVerificati
         @RequestHeader("Authorization") authorizationHeader: String): ResponseEntity<String>
     {
         val token = extractBearerToken(authorizationHeader)
-        return if (emailVerificationService.sendVerificationCode(token)) {
-            ResponseEntity("Verification code sent successfully", HttpStatus.OK)
-        } else {
-            ResponseEntity("Failed to send verification code", HttpStatus.UNAUTHORIZED)
-        }
+        val response = emailVerificationService.sendVerificationCode(token)
+
+        // Adjusting the response to match content type
+        var contentType = MediaType.TEXT_PLAIN_VALUE
+        return ResponseEntity(response.body.content, HttpHeaders().apply {
+            contentType = MediaType.parseMediaType(contentType).toString()
+        }, HttpStatus.valueOf(response.status))
     }
 
     private fun extractBearerToken(authorizationHeader: String): String {

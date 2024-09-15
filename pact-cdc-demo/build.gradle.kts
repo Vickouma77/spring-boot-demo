@@ -44,9 +44,6 @@ pact{
 		pactBrokerUrl = "http://localhost:9292"
 		consumerVersion = "1.0.1"
 	}
-	broker {
-		pactBrokerUrl = "http://localhost:9292"
-	}
 }
 
 
