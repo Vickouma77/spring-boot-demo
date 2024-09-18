@@ -14,3 +14,5 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     profiles.active: shop
+api:
+  prefix: /api/v1
