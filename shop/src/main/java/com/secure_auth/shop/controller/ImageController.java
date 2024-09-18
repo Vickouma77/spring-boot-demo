@@ -1,4 +1,4 @@
-package com.secure_auth.shop.cotroller;
+package com.secure_auth.shop.controller;
 
 
 import com.secure_auth.shop.dto.ImageDto;
