@@ -11,7 +11,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.buffer.DataBufferUtils
-import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
@@ -47,7 +46,7 @@ class S3Service(private val s3: AmazonS3) {
      * @param part the file to upload.
      * @return the result of the upload operation.
      */
-    suspend fun upload(bucket: String, fileName: String, folder: String, part: FilePart): PutObjectResult {
+    suspend fun upload(bucket: String, fileName: String, folder: String, part: String): PutObjectResult {
         return withContext(Dispatchers.IO) {
 
             val pos = PipedOutputStream()
