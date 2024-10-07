@@ -1,5 +1,0 @@
-spring:
-  application:
-    name: pact-cdc-demo
-verification:
-  token: b87f0324-50a6-4c61-94cc-b34593a1fd95
