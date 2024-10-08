@@ -52,7 +52,7 @@ class S3Service(private val s3: AmazonS3) {
             val pos = PipedOutputStream()
             val pis = PipedInputStream(pos, maxFileSize)
 
-            DataBufferUtils.write(part.content(), pos).awaitFirst()
+//            DataBufferUtils.write(part, pos).awaitFirst()
 
             pos.close()
 
