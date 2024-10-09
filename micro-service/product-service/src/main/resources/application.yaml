@@ -3,7 +3,7 @@ spring:
     name: product-service
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:27017/product-service
+      uri: mongodb://root:root@localhost:27017/product-service?authSource=admin
       password: root
       username: root
 
