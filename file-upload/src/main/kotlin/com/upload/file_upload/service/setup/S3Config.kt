@@ -12,11 +12,10 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class S3Config {
 
-    @Value("\${s3.base-url}") private var endpoint: String = ""
-    @Value("\${s3.region}") private var region: String = ""
-    @Value("\${s3.secret-key}") private var secretKey: String = ""
-    @Value("\${s3.access-key}") private val accessKey: String = ""
-
+    @Value("\${minio.url}") private var endpoint: String = ""
+    @Value("\${minio.region}") private var region: String = ""
+    @Value("\${minio.secret-key}") private var secretKey: String = ""
+    @Value("\${minio.access-key}") private val accessKey: String = ""
     /**
      * Creates and configures an AmazonS3 client bean.
      *

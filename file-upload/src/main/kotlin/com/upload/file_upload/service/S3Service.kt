@@ -9,32 +9,35 @@ import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.buffer.DataBufferUtils
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 
 
 @Service
-class S3Service(private val s3: AmazonS3) {
+class S3Service @Autowired constructor(private val s3: AmazonS3) {
+
     /**
      *  The maximum file size allowed for uploads.
      *  The name of the S3 bucket used for KYC documents.
      *  */
-    @Value("\${s3.buckets.kyc-bucket}")
+//    @Value("\${minio.buckets.kyc-bucket}")
     private val kycBucket: String = ""
 
     /**
      * The name of the S3 bucket used for portfolios.
      */
-    @Value("\${s3.buckets.portfolios-bucket}")
+    @Value("\${minio.buckets.kyc-bucket-name}")
     private val portfoliosBucket: String = ""
 
     /**
      * The maximum file size allowed for uploads.
      */
-    @Value("\${s3.max-file-size}")
+//    @Value("\${spring.servlet.multipart.max-file-size}")
     private val maxFileSize: Int = 0
 
     /**
@@ -46,7 +49,7 @@ class S3Service(private val s3: AmazonS3) {
      * @param part the file to upload.
      * @return the result of the upload operation.
      */
-    suspend fun upload(bucket: String, fileName: String, folder: String, part: String): PutObjectResult {
+    suspend fun upload(bucket: String, fileName: String, folder: String, part: FilePart): PutObjectResult {
         return withContext(Dispatchers.IO) {
 
             val pos = PipedOutputStream()
@@ -60,7 +63,7 @@ class S3Service(private val s3: AmazonS3) {
 
             log.info("Uploading to S3 bucket :: {}", bucket)
 
-            s3.putObject(PutObjectRequest(bucket, "$folder/$fileName", pis, ObjectMetadata()))
+            s3.putObject(PutObjectRequest(portfoliosBucket, "$folder/$fileName", pis, ObjectMetadata()))
         }
     }
 

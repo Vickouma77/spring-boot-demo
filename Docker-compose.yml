@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres
+    image: 'postgres:13-alpine'
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     volumes:
@@ -20,6 +20,16 @@ services:
     environment:
       - MINIO_ROOT_USER=minio-root-user
       - MINIO_ROOT_PASSWORD=minio-root-password
+
+  mongoDB:
+    image: 'mongo:7.0.5-jammy'
+    container_name: mongoDB
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=product-service
 
 volumes:
   postgres-volume:

@@ -2,24 +2,31 @@ spring:
   application:
     name: file-upload
   datasource:
-    url: postgresql://localhost:5432/file_upload
+    url: jdbc:postgresql://172.18.0.4:5432/file_upload
     username: postgres
-    password: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        ddl-auto: update
-      show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     active: test
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+
 minio:
   url: http://localhost:9000
-  access-key: minio
-  secret-key: minio123
-  bucket-name: file-upload
+  access-key: QKwR2V0d76wNQDqxhJBV
+  secret-key: JhwhdY4cwNboSIi58uffRvSPjHwF8SqMGJqEtSBV
+  buckets:
+    kyc-bucket-name: file-upload
+    portfolios-bucket-name: file-upload
   region: us-east-1
   secure: false
   port: 9000

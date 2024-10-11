@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("aws.sdk.kotlin:s3:1.0.0")
 	implementation (platform("com.amazonaws:aws-java-sdk-bom:1.11.837"))
+	implementation("io.minio:minio:8.5.12")
 	implementation ("com.amazonaws:aws-java-sdk-s3")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("software.amazon.awssdk:s3:2.28.15")
