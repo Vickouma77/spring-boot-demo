@@ -5,40 +5,22 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.model.PutObjectResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
-
+import java.io.ByteArrayInputStream
+import java.io.IOException
 
 @Service
-class S3Service @Autowired constructor(private val s3: AmazonS3) {
+class S3Service(private val s3: AmazonS3) {
 
-    /**
-     *  The maximum file size allowed for uploads.
-     *  The name of the S3 bucket used for KYC documents.
-     *  */
-//    @Value("\${minio.buckets.kyc-bucket}")
-    private val kycBucket: String = ""
-
-    /**
-     * The name of the S3 bucket used for portfolios.
-     */
     @Value("\${minio.buckets.kyc-bucket-name}")
-    private val portfoliosBucket: String = ""
-
-    /**
-     * The maximum file size allowed for uploads.
-     */
-//    @Value("\${spring.servlet.multipart.max-file-size}")
-    private val maxFileSize: Int = 0
+    private lateinit var portfoliosBucket: String
 
     /**
      * Uploads a file to the specified S3 bucket.
@@ -52,31 +34,44 @@ class S3Service @Autowired constructor(private val s3: AmazonS3) {
     suspend fun upload(bucket: String, fileName: String, folder: String, part: FilePart): PutObjectResult {
         return withContext(Dispatchers.IO) {
 
-            val pos = PipedOutputStream()
-            val pis = PipedInputStream(pos, maxFileSize)
+            // Combine all parts of FilePart's content into a ByteArray
+            val dataBuffer = DataBufferUtils.join(part.content()).awaitSingleOrNull()
+                ?: throw IOException("Failed to read file content from multipart data.")
 
-//            DataBufferUtils.write(part, pos).awaitFirst()
+            val bytes = ByteArray(dataBuffer.readableByteCount())
+            dataBuffer.read(bytes)
+            DataBufferUtils.release(dataBuffer)
 
-            pos.close()
+            // Set metadata
+            val metadata = ObjectMetadata().apply {
+                contentLength = bytes.size.toLong()
+                contentType = part.headers().contentType?.toString() ?: "multipart/form-data"
+            }
 
-            DataBufferUtils.releaseConsumer()
+            val inputStream = ByteArrayInputStream(bytes)
 
-            log.info("Uploading to S3 bucket :: {}", bucket)
+            log.info("Uploading to S3 bucket :: $bucket, file path: $folder/$fileName")
 
-            s3.putObject(PutObjectRequest(portfoliosBucket, "$folder/$fileName", pis, ObjectMetadata()))
-        }
-    }
-
-    suspend fun delete(bucket: String, fileName: String, folder: String): Unit {
-        return withContext(Dispatchers.IO) {
-            s3.deleteObject(bucket, "$folder/$fileName")
+            // Upload file to S3
+            s3.putObject(PutObjectRequest(bucket, "$folder/$fileName", inputStream, metadata))
         }
     }
 
     /**
-     * Companion object to hold the logger instance.
+     * Deletes a file from the specified S3 bucket.
+     *
+     * @param bucket the name of the S3 bucket.
+     * @param fileName the name of the file to delete.
+     * @param folder the folder where the file resides in the S3 bucket.
      */
+    suspend fun delete(bucket: String, fileName: String, folder: String) {
+        withContext(Dispatchers.IO) {
+            log.info("Deleting from S3 bucket :: $bucket, file path: $folder/$fileName")
+            s3.deleteObject(bucket, "$folder/$fileName")
+        }
+    }
+
     companion object {
-        var log: Logger = LoggerFactory.getLogger(this::class.java)
+        var log: Logger = LoggerFactory.getLogger(S3Service::class.java)
     }
 }

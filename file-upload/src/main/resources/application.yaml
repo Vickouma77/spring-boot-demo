@@ -14,7 +14,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   profiles:
-    active: test
+    active: default
   servlet:
     multipart:
       enabled: true
