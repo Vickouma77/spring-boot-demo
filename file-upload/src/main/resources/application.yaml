@@ -2,7 +2,7 @@ spring:
   application:
     name: file-upload
   datasource:
-    url: jdbc:postgresql://172.18.0.4:5432/file_upload
+    url: jdbc:postgresql://localhost:5432/file_upload
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver

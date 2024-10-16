@@ -1,65 +1,68 @@
 package com.upload.file_upload.integration.initializer
 
+
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.context.annotation.Bean
 import org.springframework.test.context.support.TestPropertySourceUtils
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
+import java.time.Duration
 
-@TestConfiguration(proxyBeanMethods = false)
-class TestContainersInitializer: ApplicationContextInitializer<ConfigurableApplicationContext> {
+class TestContainersInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-	override fun initialize(applicationContext: ConfigurableApplicationContext){
+	override fun initialize(applicationContext: ConfigurableApplicationContext) {
 
 		runBlocking {
 			val postgresDeferred = async(IO) { createPostgresContainer() }
+			val postgres = postgresDeferred.await()
+
+			// Asynchronously create and start the MinIO container
 			val minioDeferred = async(IO) { createMinioContainer() }
 
-			//Await all containers after they are launched
-			val postgres = postgresDeferred.await()
+			// Wait for the MinIO container to be ready
 			val minio = minioDeferred.await()
 
+			// Add properties to the Spring application context environment
 			TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
 				applicationContext,
 				"POSTGRES_JDBC_URL=${postgres.jdbcUrl}",
 				"POSTGRES_USERNAME=${postgres.username}",
 				"POSTGRES_PASSWORD=${postgres.password}",
-				"MINIO_URL=http://${minio.host}:${minio.firstMappedPort}"
+				"MINIO_URL=http://${minio.host}:${minio.getMappedPort(9000)}",
+				"MINIO_ACCESS_KEY=minio",
+				"MINIO_SECRET_KEY=minio123"
 			)
 		}
 	}
 
 	private fun createPostgresContainer(): PostgreSQLContainer<Nothing> {
-		val imageName = DockerImageName.parse("postgres:latest").asCompatibleSubstituteFor("postgres")
-
-		val server = PostgreSQLContainer<Nothing>(imageName).apply {
-			withDatabaseName("file_upload_db")
+		return PostgreSQLContainer<Nothing>(DockerImageName.parse("postgres:13-alpine")).apply {
+			withDatabaseName("file_upload")
 			withUsername("postgres")
-			withPassword("postgres")
-			withExposedPorts(5432)
+			withPassword("root")
+			waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*", 1)
+				.withStartupTimeout(Duration.ofMinutes(2)))
+
+			start()  // Start the container right after configuration
 		}
-
-		server.start()
-
-		return server
 	}
 
-	private fun createMinioContainer(): GenericContainer<Nothing> {
-		val server = GenericContainer<Nothing>("minio/minio:latest").apply {
+	private fun createMinioContainer(): GenericContainer<*> {
+		return GenericContainer<Nothing>("bitnami/minio:2024.10.2").apply {
 			withExposedPorts(9000)
-			withEnv("MINIO_ACCESS_KEY", "minio")
-			withEnv("MINIO_SECRET_KEY", "minio123")
+			withEnv("MINIO_ROOT_USER", "minio")
+			withEnv("MINIO_ROOT_PASSWORD", "minio123")
+			waitingFor(Wait.forLogMessage(".*API:.*localhost.*", 1)
+				.withStartupTimeout(Duration.ofMinutes(2)))
+
+			start()  // Start the container right after configuration
 		}
-
-		server.start()
-
-		return server
 	}
+
 }
+

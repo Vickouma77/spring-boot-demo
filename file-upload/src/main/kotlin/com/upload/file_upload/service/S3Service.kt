@@ -38,14 +38,18 @@ class S3Service(private val s3: AmazonS3) {
             val dataBuffer = DataBufferUtils.join(part.content()).awaitSingleOrNull()
                 ?: throw IOException("Failed to read file content from multipart data.")
 
+            // Read the content of the DataBuffer into a ByteArray
             val bytes = ByteArray(dataBuffer.readableByteCount())
             dataBuffer.read(bytes)
+
+            // Release the DataBuffer to free up resources
             DataBufferUtils.release(dataBuffer)
 
             // Set metadata
             val metadata = ObjectMetadata().apply {
                 contentLength = bytes.size.toLong()
-                contentType = part.headers().contentType?.toString() ?: "multipart/form-data"
+                contentType = part.headers().contentType.toString()
+                contentEncoding = part.headers().contentDisposition.type
             }
 
             val inputStream = ByteArrayInputStream(bytes)
