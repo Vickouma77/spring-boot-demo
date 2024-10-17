@@ -1,9 +1,10 @@
+scalar Upload
+
 type Query {
-  uploads: [File]
+  _: Boolean
 }
 
-type File {
-  filename: String
-  mimetype: String
-  encoding: String
+type Mutation {
+  uploadFile(bucket: String!, fileName: String!, folder: String!, file: Upload!): Boolean!
+  deleteFile(bucket: String!, fileName: String!, folder: String!): Boolean!
 }
