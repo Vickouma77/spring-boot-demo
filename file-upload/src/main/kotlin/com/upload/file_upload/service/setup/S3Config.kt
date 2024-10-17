@@ -28,6 +28,7 @@ class S3Config {
             .withCredentials(
                 AWSStaticCredentialsProvider(BasicAWSCredentials(accessKey, secretKey))
             )
+            .withPathStyleAccessEnabled(true)
             .build()
     }
 }

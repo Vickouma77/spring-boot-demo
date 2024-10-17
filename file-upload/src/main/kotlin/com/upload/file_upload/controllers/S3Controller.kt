@@ -29,7 +29,7 @@ class S3Controller {
     @Value("\${minio.buckets.kyc-bucket-name}")
     private val portfoliosBucket: String = ""
 
-    @PostMapping(UPLOAD_FILE, consumes = ["multipart/form-data", MediaType.IMAGE_JPEG_VALUE])
+    @PostMapping(UPLOAD_FILE, consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, "application/octet-stream"])
     suspend fun uploadFile(@RequestPart("file") file: FilePart): ResponseEntity<String> {
         logger.info("Received file: ${file.filename()} for upload")
         return try {

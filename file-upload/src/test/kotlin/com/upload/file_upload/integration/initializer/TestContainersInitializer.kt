@@ -14,7 +14,6 @@ import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 
 class TestContainersInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
-
 	override fun initialize(applicationContext: ConfigurableApplicationContext) {
 
 		runBlocking {
