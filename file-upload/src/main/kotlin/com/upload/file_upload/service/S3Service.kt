@@ -3,7 +3,6 @@ package com.upload.file_upload.service
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
-import com.amazonaws.services.s3.model.PutObjectResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.withContext
@@ -29,9 +28,9 @@ class S3Service(private val s3: AmazonS3) {
      * @param fileName the name of the file to upload.
      * @param folder the folder in the S3 bucket to upload the file to.
      * @param part the file to upload.
-     * @return the result of the upload operation.
+     * @return a success message.
      */
-    suspend fun upload(bucket: String, fileName: String, folder: String, part: FilePart): PutObjectResult {
+    suspend fun upload(bucket: String, fileName: String, folder: String, part: FilePart): String {
         return withContext(Dispatchers.IO) {
 
             // Combine all parts of FilePart's content into a ByteArray
@@ -57,7 +56,13 @@ class S3Service(private val s3: AmazonS3) {
             log.info("Uploading to S3 bucket :: $bucket, file path: $folder/$fileName")
 
             // Upload file to S3
-            s3.putObject(PutObjectRequest(bucket, "$folder/$fileName", inputStream, metadata))
+            val result = s3.putObject(PutObjectRequest(bucket, "$folder/$fileName", inputStream, metadata))
+
+            // Optionally log or use the PutObjectResult
+            log.info("File upload result: ${result.eTag}")
+
+            // Return a success message
+            "File uploaded successfully: $fileName"
         }
     }
 
@@ -68,7 +73,7 @@ class S3Service(private val s3: AmazonS3) {
      * @param fileName the name of the file to delete.
      * @param folder the folder where the file resides in the S3 bucket.
      */
-    suspend fun delete(bucket: String, fileName: String, folder: String) {
+    suspend fun delete(bucket: String, fileName: String, folder: String, part: FilePart) {
         withContext(Dispatchers.IO) {
             log.info("Deleting from S3 bucket :: $bucket, file path: $folder/$fileName")
             s3.deleteObject(bucket, "$folder/$fileName")

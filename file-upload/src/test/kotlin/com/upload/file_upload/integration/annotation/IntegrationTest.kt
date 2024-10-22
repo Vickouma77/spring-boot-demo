@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-@SpringBootTest
+//@SpringBootTest
 @ContextConfiguration(initializers = [TestContainersInitializer::class])
 @ActiveProfiles("test")
 annotation class IntegrationTest
