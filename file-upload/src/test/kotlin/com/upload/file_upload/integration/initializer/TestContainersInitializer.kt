@@ -45,7 +45,7 @@ class TestContainersInitializer : ApplicationContextInitializer<ConfigurableAppl
 			withUsername("postgres")
 			withPassword("root")
 			waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*", 1)
-				.withStartupTimeout(Duration.ofMinutes(2)))
+				.withStartupTimeout(Duration.ofMinutes(5)))
 
 			start()  // Start the container right after configuration
 		}
@@ -57,7 +57,7 @@ class TestContainersInitializer : ApplicationContextInitializer<ConfigurableAppl
 			withEnv("MINIO_ROOT_USER", "minio")
 			withEnv("MINIO_ROOT_PASSWORD", "minio123")
 			waitingFor(Wait.forLogMessage(".*API:.*localhost.*", 1)
-				.withStartupTimeout(Duration.ofMinutes(2)))
+				.withStartupTimeout(Duration.ofMinutes(5)))
 
 			start()  // Start the container right after configuration
 		}

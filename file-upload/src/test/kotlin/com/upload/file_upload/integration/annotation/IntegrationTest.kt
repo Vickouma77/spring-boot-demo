@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-//@SpringBootTest
+@SpringBootTest(properties = ["spring.main.web-application-type=reactive"])
 @ContextConfiguration(initializers = [TestContainersInitializer::class])
 @ActiveProfiles("test")
 annotation class IntegrationTest
