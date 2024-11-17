@@ -1,0 +1,7 @@
+#Sun Nov 03 12:47:00 UTC 2024
+micronaut:
+  application:
+    name: micronaut-demo
+mongo:
+  uri: mongodb://localhost:27017/micronaut-demo
+  database: micronaut-demo
