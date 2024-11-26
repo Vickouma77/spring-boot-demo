@@ -4,12 +4,13 @@ import jakarta.persistence.*
 import java.util. *
 
 @Entity
-@Table(name = "users")
 class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    val id: String = ""
-    val name: String = ""
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0
+
+    @Column(nullable = false)
+    var name: String = ""
 
     @Column(nullable = false, unique = true)
     var username: String = ""
@@ -22,9 +23,9 @@ class Users {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinTable(
-        name = "roles",
+        name = "user_roles",
         joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "id")]
     )
-    var roles: Set<Role> = HashSet()
+    var roles: MutableSet<Role> = HashSet()
 }

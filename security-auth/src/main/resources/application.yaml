@@ -1,13 +1,36 @@
+server:
+  port: 9000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 spring:
   application:
     name: security-auth
+  security:
+    user:
+      name: user
+      password: password
+    oauth2:
+      authorizationserver:
+        client:
+          registration:
+            issuer: "http://localhost:9000"
+            oidc-client:
+              client-id: "oidc-client"
+              client-secret: "oidc-client-secret"
+              client-authentication-method: basic
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+              scope:
+                - "openid"
+              client-name: "OIDC Client"
+
   datasource:
-    url: jdbc:mysql://localhost:3306/login_system
+    url: jdbc:postgresql://172.17.0.2:5432/security
     username: root
     password: root
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: test

@@ -18,7 +18,7 @@ class CustomUserDetailsService(
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(usernameOrEmail: String): UserDetails {
         val user: Users = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-            .orElseThrow { UsernameNotFoundException("User not exists by Username or Email") }
+            .orElseThrow { UsernameNotFoundException("User does not exists by Username or Email") }
 
         val authorities = user.roles.map { SimpleGrantedAuthority(it.name) }.toSet()
 
