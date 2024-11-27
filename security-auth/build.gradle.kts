@@ -33,7 +33,9 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation("io.mockk:mockk:1.13.11")
+	testImplementation("org.testcontainers:postgresql")
 	testImplementation("org.testcontainers:testcontainers:1.20.1")
+	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 kotlin {
