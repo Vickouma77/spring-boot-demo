@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: datadog
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics, health
+  datadog:
+    metrics:
+      export:
+        api-key: ${DATADOG_API_KEY}
+        uri: https://ap1.datadoghq.com
+        step: 30s
+  metrics:
+    tags:
+      application: "data-dog-1"
+
+logging:
+  level:
+    root: DEBUG
