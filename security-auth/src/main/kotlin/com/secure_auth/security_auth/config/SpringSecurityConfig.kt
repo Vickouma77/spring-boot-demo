@@ -46,10 +46,21 @@ import java.util.UUID
 @EnableWebSecurity
 class SpringSecurityConfig {
 
+    /**
+     * Bean definition for AuthorizationServerSettings.
+     *
+     * @return an instance of AuthorizationServerSettings with default settings.
+     */
     @Bean
     fun authorizationServerSetting(): AuthorizationServerSettings =
         AuthorizationServerSettings.builder().build()
 
+    /**
+     * Configures the security filter chain for the authorization server.
+     *
+     * @param http the HttpSecurity to modify
+     * @return the configured SecurityFilterChain
+     */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -66,6 +77,12 @@ class SpringSecurityConfig {
         return http.build()
     }
 
+    /**
+     * Configures the default security filter chain for the application.
+     *
+     * @param http the HttpSecurity to modify
+     * @return the configured SecurityFilterChain
+     */
      @Bean
      @Order(Ordered.LOWEST_PRECEDENCE)
      fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -89,6 +106,12 @@ class SpringSecurityConfig {
             return http.build()
      }
 
+    /**
+     * Bean definition for RegisteredClientRepository.
+     *
+     * @param jdbcTemplate the JdbcTemplate to use for database operations
+     * @return an instance of RegisteredClientRepository
+     */
     @Bean
     fun registeredClientRepository(jdbcTemplate: JdbcTemplate): RegisteredClientRepository {
         val baseClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -142,12 +165,31 @@ class SpringSecurityConfig {
         return registeredClientRepository
     }
 
+    /**
+     * Checks if a given client exists in the repository.
+     *
+     * @param client the RegisteredClient to check for existence
+     * @param repository the JdbcRegisteredClientRepository to search in
+     * @return true if the client exists, false otherwise
+     */
     private fun exists(client: RegisteredClient, repository: JdbcRegisteredClientRepository): Boolean =
         repository.findByClientId(client.clientId) != null
 
+    /**
+     * Bean definition for PasswordEncoder.
+     *
+     * @return an instance of BCryptPasswordEncoder
+     */
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
+    /**
+     * Bean definition for OAuth2AuthorizationService.
+     *
+     * @param jdbcTemplate the JdbcTemplate to use for database operations
+     * @param registeredClientRepository the repository for registered clients
+     * @return an instance of OAuth2AuthorizationService
+     */
     @Bean
     fun authorizationService(
         jdbcTemplate: JdbcTemplate,
@@ -155,6 +197,13 @@ class SpringSecurityConfig {
     ): OAuth2AuthorizationService =
         JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository)
 
+    /**
+     * Bean definition for OAuth2AuthorizationConsentService.
+     *
+     * @param jdbcTemplate the JdbcTemplate to use for database operations
+     * @param registeredClientRepository the repository for registered clients
+     * @return an instance of OAuth2AuthorizationConsentService
+     */
     @Bean
     fun authorizationConsentService(
         jdbcTemplate: JdbcTemplate,
@@ -162,6 +211,13 @@ class SpringSecurityConfig {
     ): OAuth2AuthorizationConsentService =
         JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository)
 
+    /**
+     * Bean definition for JWKSource.
+     *
+     * This bean generates an RSA key pair and creates a JWKSource from it.
+     *
+     * @return an instance of JWKSource with the generated RSA key pair.
+     */
     @Bean
     fun jwkSource(): JWKSource<SecurityContext> {
         val keyPair = generateRsaKey()
