@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: redis-demo
+
+  data:
+    redis:
+      redis-mode-cluster: ${REDIS_MODE_CLUSTER}
+      ssl:
+        enabled: ${REDIS_CONNECTION_USES_SSL}
+      cluster:
+        cache-name:
+          otp:
+            ttl: ${REDIS_CACHE_NAME_OTP_TTL_MINUTES:20}
+        nodes: ${SPRING_REDIS_CLUSTER_NODES_ADDRESS}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      client-type: lettuce
+      timeout: ${REDIS_TIMEOUT}
+      lettuce:
+        cluster:
+          refresh:
+            period: ${REDIS_CLUSTER_TOPOLOGY_REFRESH_PERIOD_IN_SECONDS}
+        pool:
+          max-active: ${SPRING_REDIS_LETTUCE_POOL_MAX-ACTIVE:100}
