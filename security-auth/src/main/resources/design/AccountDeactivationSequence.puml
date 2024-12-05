@@ -1,0 +1,54 @@
+@startuml
+skinparam actorStyle awesome
+skinparam participantPadding 20
+skinparam participantBorderThickness 1
+
+actor Landlord
+actor Manager
+participant "Onboarding Service" as OnboardingService
+participant "Portfolio Service" as PortfolioService
+participant "Notification Service" as NotificationService
+participant "Authorization Service" as AuthorizationService
+participant "Billing Service" as BillingService
+participant "Gateway Service" as GatewayService
+database "Database" as Database
+
+== Landlord Deactivation ==
+Landlord -> GatewayService: Deactivation request
+GatewayService -> AuthorizationService: Verify user identity
+AuthorizationService --> GatewayService: Authorization confirmed
+GatewayService -> OnboardingService: Process account deactivation
+
+OnboardingService -> PortfolioService: Retrieve associated portfolios
+PortfolioService -> Database: Remove all portfolio entries
+Database --> PortfolioService: Portfolios removed
+PortfolioService -> NotificationService: Notify managers of removal
+NotificationService --> Manager: Inform portfolio access revoked
+
+OnboardingService -> BillingService: Close billing account
+BillingService --> OnboardingService: Billing account closed
+
+OnboardingService -> AuthorizationService: Revoke user access
+AuthorizationService --> OnboardingService: Access revoked
+
+OnboardingService -> Database: Deactivate landlord account
+NotificationService --> Landlord: Send deactivation confirmation
+
+== Manager Deactivation ==
+Manager -> GatewayService: Deactivation request
+GatewayService -> AuthorizationService: Verify user identity
+AuthorizationService --> GatewayService: Authorization confirmed
+GatewayService -> OnboardingService: Process account deactivation
+
+OnboardingService -> PortfolioService: Identify portfolios with manager access
+PortfolioService -> Database: Remove manager from portfolios
+Database --> PortfolioService: Confirm manager removal
+PortfolioService -> NotificationService: Notify landlords of manager removal
+NotificationService --> Landlord: Inform manager access revoked
+
+OnboardingService -> AuthorizationService: Revoke user access
+AuthorizationService --> OnboardingService: Access revoked
+
+OnboardingService -> Database: Delete manager account
+NotificationService --> Manager: Send deactivation confirmation
+@enduml
