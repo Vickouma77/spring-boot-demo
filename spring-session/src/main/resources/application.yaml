@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: spring-session
+  docker:
+    compose:
+      file: spring-session/docker-compose.yaml
+    lifecycle-management: start-only
