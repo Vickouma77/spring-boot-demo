@@ -11,44 +11,82 @@ participant "Notification Service" as NotificationService
 participant "Authorization Service" as AuthorizationService
 participant "Billing Service" as BillingService
 participant "Gateway Service" as GatewayService
-database "Database" as Database
+participant "Maintenance Service" as MaintenanceService
 
 == Landlord Deactivation ==
 Landlord -> GatewayService: Deactivation request
 GatewayService -> AuthorizationService: Verify user identity
 AuthorizationService --> GatewayService: Authorization confirmed
-GatewayService -> OnboardingService: Process account deactivation
+GatewayService -> OnboardingService: Process deactivation request
 
 OnboardingService -> PortfolioService: Retrieve associated portfolios
-PortfolioService -> Database: Remove all portfolio entries
-Database --> PortfolioService: Portfolios removed
-PortfolioService -> NotificationService: Notify managers of removal
-NotificationService --> Manager: Inform portfolio access revoked
+alt No active portfolios exist
+    OnboardingService -> NotificationService: Notify landlord of deactivation
+    NotificationService --> Landlord: Notify account deactivated
+    OnboardingService -> AuthorizationService: Revoke landlord access
+    AuthorizationService --> OnboardingService: Access revoked
+    OnboardingService -> BillingService: Close billing accounts
+    BillingService --> OnboardingService: Billing accounts closed
+else Active portfolios exist
+    PortfolioService -> PortfolioService: Check for rent-paying tenants and active work orders
+    alt No tenants and no active work orders
+        OnboardingService -> NotificationService: Warn of active portfolios
+        NotificationService --> Landlord: Notify no tenants/work orders, confirm deactivation
+        OnboardingService -> AuthorizationService: Revoke landlord access
+        AuthorizationService --> OnboardingService: Access revoked
+        OnboardingService -> BillingService: Close billing accounts
+        BillingService --> OnboardingService: Billing accounts closed
+    else Rent-paying tenants or active work orders exist
+        OnboardingService -> NotificationService: Warn landlord of constraints
+        NotificationService --> Landlord: Notify account cannot be deactivated due to dependencies
+    end
 
-OnboardingService -> BillingService: Close billing account
-BillingService --> OnboardingService: Billing account closed
+    alt Landlord confirms override
+        Landlord -> OnboardingService: Override confirmation
+        OnboardingService -> PortfolioService: Notify management team
+        PortfolioService -> OnboardingService: Portfolios frozen
+        OnboardingService -> MaintenanceService: Cancel active work orders
+        MaintenanceService --> OnboardingService: Work orders canceled
+        OnboardingService -> AuthorizationService: Revoke landlord access
+        AuthorizationService --> OnboardingService: Access revoked
+        OnboardingService -> BillingService: Close billing accounts
+        BillingService --> OnboardingService: Billing accounts closed
+        OnboardingService -> NotificationService: Notify landlord of deactivation
+        NotificationService --> Landlord: Deactivation confirmed
+    else Landlord declines override
+        OnboardingService -> NotificationService: Notify landlord of failure
+        NotificationService --> Landlord: Inform failure and status retained
+    end
+end
 
-OnboardingService -> AuthorizationService: Revoke user access
-AuthorizationService --> OnboardingService: Access revoked
-
-OnboardingService -> Database: Deactivate landlord account
-NotificationService --> Landlord: Send deactivation confirmation
+alt Failure at any step
+    OnboardingService -> NotificationService: Notify landlord of failure
+    NotificationService --> Landlord: Inform failure and status retained
+end
 
 == Manager Deactivation ==
 Manager -> GatewayService: Deactivation request
 GatewayService -> AuthorizationService: Verify user identity
 AuthorizationService --> GatewayService: Authorization confirmed
-GatewayService -> OnboardingService: Process account deactivation
+GatewayService -> OnboardingService: Process deactivation request
 
-OnboardingService -> PortfolioService: Identify portfolios with manager access
-PortfolioService -> Database: Remove manager from portfolios
-Database --> PortfolioService: Confirm manager removal
-PortfolioService -> NotificationService: Notify landlords of manager removal
-NotificationService --> Landlord: Inform manager access revoked
+OnboardingService -> PortfolioService: Identify portfolios managed by the manager
+alt No managed portfolios exist
+    OnboardingService -> AuthorizationService: Revoke manager access
+    AuthorizationService --> OnboardingService: Access revoked
+    OnboardingService -> NotificationService: Notify manager of deactivation
+    NotificationService --> Manager: Deactivation confirmed
+else Managed portfolios exist
+    OnboardingService -> PortfolioService: Reassign portfolios or mark unmanaged
+    PortfolioService --> OnboardingService: Portfolios reassigned or marked unmanaged
+    OnboardingService -> AuthorizationService: Revoke manager access
+    AuthorizationService --> OnboardingService: Access revoked
+    OnboardingService -> NotificationService: Notify manager of deactivation
+    NotificationService --> Manager: Deactivation confirmed
+end
 
-OnboardingService -> AuthorizationService: Revoke user access
-AuthorizationService --> OnboardingService: Access revoked
-
-OnboardingService -> Database: Delete manager account
-NotificationService --> Manager: Send deactivation confirmation
+alt Failure at any step
+    OnboardingService -> NotificationService: Notify manager of failure
+    NotificationService --> Manager: Inform failure and status retained
+end
 @enduml

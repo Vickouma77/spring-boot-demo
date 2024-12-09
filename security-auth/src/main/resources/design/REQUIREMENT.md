@@ -14,7 +14,7 @@ Feature: Account Deactivation
         And Billing account closed confirmation
         And Revoke user access confirmation
         And Deactivate landlord account in Database
-        And Send deactivation confirmation to landlord
+        And Send deactivation confirmation to landlord 
 
    scenario: Manager Deactivation
         Given Manager initiates deactivation

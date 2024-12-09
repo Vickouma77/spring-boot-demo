@@ -1,6 +1,7 @@
 @startuml
 !define RECTANGLE class
 
+' Define packages for better organization
 package "Onboarding Service" {
     RECTANGLE Landlord {
         +deactivateAccount()
@@ -70,75 +71,86 @@ package "Database" {
     }
 }
 
+' Define relationships with clear directions
 Landlord --> Portfolio : owns >
 Portfolio --> Property : contains >
 Portfolio --> Manager : manages >
 Manager --> Portfolio : notifies >
+
+' Notification relationships
 Landlord --> Notification : uses >
 Manager --> Notification : receives >
+
+' Authorization relationships
 Landlord --> Auth : requires authorization >
 Manager --> Auth : verifies >
+
+' Billing relationships
 Landlord --> Billing : manages billing >
 Billing --> Auth : validates identity >
+
+' Gateway relationships
 Gateway --> Notification : proxies >
 Gateway --> Auth : validates sessions >
 Gateway --> UserDB : accesses >
 Gateway --> PortfolioDB : accesses >
 
+' Notes for actions
 note right of Landlord
-    When a landlord deactivates their account:
-    1. Call deactivateAccount()
-    2. Notify all managers
-    3. Notify all tenants
-    4. Freeze portfolios (no new activities)
-    5. Revoke authorization via Authorization Service
-    6. Close billing accounts via Billing Service
-    7. Remove landlord from database
+When a landlord deactivates their account:
+1. Call deactivateAccount()
+2. Notify all managers
+3. Notify all tenants
+4. Freeze portfolios (no new activities)
+5. Revoke authorization via Authorization Service
+6. Close billing accounts via Billing Service
+7. Remove landlord from database
 end note
 
 note right of Manager
-    When a manager deactivates their account:
-    1. Call deactivateAccount()
-    2. Remove manager from all portfolios
-    3. Notify landlords of manager removal
-    4. Notify tenants of manager reassignment
-    5. Revoke authorization via Authorization Service
+When a manager deactivates their account:
+1. Call deactivateAccount()
+2. Remove manager from all portfolios
+3. Notify landlords of manager removal
+4. Notify tenants of manager reassignment
+5. Revoke authorization via Authorization Service
 end note
 
 note right of Portfolio
-    On deactivation:
-    1. Call removeManager(managerId)
-    2. Freeze work orders (stop new tasks)
-    3. Call removeProperties() (if needed)
-    4. Notify relevant landlords and tenants
+On deactivation:
+1. Call removeManager(managerId)
+2. Freeze work orders (stop new tasks)
+3. Call removeProperties() (if needed)
+4. Notify relevant landlords and tenants
 end note
 
 note right of Property
-    On removal:
-    1. Call remove() from database
+On removal:
+1. Call remove() from database
 end note
 
 note right of Auth
-    Handles user authorization:
-    1. Revokes access upon deactivation
-    2. Verifies user identity for service operations
+Handles user authorization:
+1. Revokes access upon deactivation
+2. Verifies user identity for service operations
 end note
 
 note right of Billing
-    Handles billing processes:
-    1. Closes accounts upon user deactivation
-    2. Issues refunds if applicable
+Handles billing processes:
+1. Closes accounts upon user deactivation
+2. Issues refunds if applicable
 end note
 
 note right of Notification
-    Facilitates communication:
-    1. Sends alerts to users (tenants, managers, landlords)
-    2. Manages messaging channels (email, SMS, etc.)
+Facilitates communication:
+1. Sends alerts to users (tenants, managers, landlords)
+2. Manages messaging channels (email, SMS, etc.)
 end note
 
 note right of Gateway
-    Orchestrates service interactions:
-    1. Validates and routes requests
-    2. Integrates with Authorization Service for session management
+Orchestrates service interactions:
+1. Validates and routes requests
+2. Integrates with Authorization Service for session management
 end note
+
 @enduml
