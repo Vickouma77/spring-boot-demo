@@ -2,6 +2,8 @@
 skinparam actorStyle awesome
 skinparam participantPadding 20
 skinparam participantBorderThickness 1
+skinparam Boxpadding 10
+!theme cloudscape-design
 
 actor Landlord
 actor Manager
